@@ -1,0 +1,129 @@
+/* ===== NOVA SIGNATURE HOMEPAGE ===== */
+
+.content-area {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(116, 78, 220, .13), transparent 38%),
+    radial-gradient(ellipse at 85% 65%, rgba(49, 157, 206, .07), transparent 35%);
+}
+
+.welcome {
+  position: relative;
+  width: min(900px, 100%);
+  padding: 45px 25px;
+}
+
+.welcome::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(132, 92, 255, .10), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.welcome > * {
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 32px;
+  font-size: 49px;
+  background: linear-gradient(145deg, #b49aff, #7550df 55%, #42c8ed);
+  box-shadow:
+    0 0 35px rgba(145, 105, 255, .35),
+    0 0 90px rgba(105, 83, 220, .16);
+}
+
+.welcome h1 {
+  font-size: clamp(46px, 6vw, 76px);
+  letter-spacing: -4px;
+  line-height: 1.04;
+  margin: 23px 0;
+}
+
+.welcome-description {
+  font-size: 15px;
+  color: #aaa6bd;
+  line-height: 2;
+}
+
+.suggestions {
+  max-width: 780px;
+  margin-top: 43px;
+  gap: 16px;
+}
+
+.suggestions button {
+  min-height: 105px;
+  padding: 21px;
+  border-radius: 19px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.8;
+  background: linear-gradient(145deg, rgba(34, 29, 55, .85), rgba(17, 18, 31, .8));
+  border: 1px solid rgba(164, 139, 255, .15);
+  box-shadow: 0 12px 35px rgba(0,0,0,.12);
+}
+
+.suggestions button:hover {
+  border-color: rgba(164, 139, 255, .55);
+  box-shadow: 0 12px 35px rgba(117, 83, 220, .13);
+}
+
+.input-box {
+  max-width: 850px;
+  padding: 19px 21px;
+  border-radius: 21px;
+  background: rgba(25, 22, 42, .96);
+  border: 1px solid rgba(164, 139, 255, .30);
+  box-shadow:
+    0 15px 50px rgba(0,0,0,.25),
+    0 0 30px rgba(130, 95, 230, .06);
+}
+
+.input-box:focus-within {
+  border-color: rgba(166, 135, 255, .75);
+  box-shadow: 0 0 30px rgba(130, 95, 230, .13);
+}
+
+.input-box textarea {
+  font-size: 14px;
+  min-height: 55px;
+}
+
+.input-bottom button {
+  padding: 12px 23px;
+  border-radius: 12px;
+}
+
+.main-footer {
+  background: rgba(255,255,255,.012);
+}
+
+@media (max-width: 760px) {
+  .welcome {
+    padding: 25px 5px;
+  }
+
+  .welcome h1 {
+    font-size: 45px;
+    letter-spacing: -2px;
+  }
+
+  .welcome-icon {
+    width: 78px;
+    height: 78px;
+    font-size: 38px;
+  }
+
+  .suggestions button {
+    min-height: 65px;
+  }
+}
