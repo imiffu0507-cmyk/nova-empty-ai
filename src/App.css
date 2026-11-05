@@ -1,129 +1,482 @@
-/* ===== NOVA SIGNATURE HOMEPAGE ===== */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-.content-area {
-  background:
-    radial-gradient(ellipse at 50% 30%, rgba(116, 78, 220, .13), transparent 38%),
-    radial-gradient(ellipse at 85% 65%, rgba(49, 157, 206, .07), transparent 35%);
+:root {
+  font-family: 'DM Sans', sans-serif;
+  color: #f7f5ff;
+  background: #07070b;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
 }
 
-.welcome {
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #07070b;
+}
+
+button {
+  font: inherit;
+}
+
+/* MAIN */
+
+.nova-app {
+  min-height: 100vh;
   position: relative;
-  width: min(900px, 100%);
-  padding: 45px 25px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 43%, rgba(103, 67, 214, .13), transparent 35%),
+    radial-gradient(ellipse at 10% 90%, rgba(40, 100, 190, .08), transparent 35%),
+    #07070b;
 }
 
-.welcome::before {
+.nova-app::before {
   content: "";
   position: absolute;
-  width: 420px;
-  height: 420px;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(132, 92, 255, .10), transparent 70%);
+  inset: 0;
   pointer-events: none;
-  z-index: 0;
+  opacity: .12;
+  background-image: radial-gradient(#aaa 0.5px, transparent 0.5px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
 }
 
-.welcome > * {
+/* NAVBAR */
+
+.navbar {
+  height: 82px;
+  max-width: 1240px;
+  padding: 0 40px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.brand-symbol {
+  color: #b49aff;
+  font-size: 27px;
+  text-shadow: 0 0 20px #8d69ff;
+}
+
+.brand-divider {
+  color: #625d70;
+}
+
+.brand-light {
+  color: #a9a2ba;
+  font-size: 12px;
+  letter-spacing: 3px;
+}
+
+.nav-status {
+  color: #aaa4bb;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.status-dot,
+.note-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 9px;
+  border-radius: 50%;
+  background: #8bdfba;
+  box-shadow: 0 0 12px #8bdfba;
+}
+
+.menu-button {
+  display: none;
+}
+
+/* HERO */
+
+.hero {
+  width: min(100%, 1050px);
+  margin: auto;
+  min-height: calc(100vh - 145px);
+  padding: 85px 25px 60px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
   position: relative;
   z-index: 1;
 }
 
-.welcome-icon {
-  width: 100px;
-  height: 100px;
-  border-radius: 32px;
-  font-size: 49px;
-  background: linear-gradient(145deg, #b49aff, #7550df 55%, #42c8ed);
+.hero-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #b9a9ed;
+  font-size: 10px;
+  letter-spacing: 4px;
+  font-weight: 600;
+}
+
+.label-line {
+  width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #a58aff);
+}
+
+.hero h1 {
+  margin: 30px 0 18px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(54px, 7vw, 88px);
+  line-height: 1.02;
+  letter-spacing: -5px;
+  font-weight: 600;
+}
+
+.hero h1 span {
+  background: linear-gradient(100deg, #fff 10%, #c8b6ff 50%, #8263e9);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.hero-description {
+  color: #a39caf;
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+/* NOVA ORB */
+
+.nova-orb {
+  width: 250px;
+  height: 250px;
+  margin: 30px 0 15px;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.orb-ring {
+  position: absolute;
+  border: 1px solid rgba(164, 130, 255, .25);
+  border-radius: 50%;
+  animation: orbit 12s linear infinite;
+}
+
+.ring-one {
+  width: 145px;
+  height: 145px;
+  border-top-color: #c4aaff;
+}
+
+.ring-two {
+  width: 195px;
+  height: 195px;
+  border-right-color: #9d7aff;
+  animation-direction: reverse;
+}
+
+.ring-three {
+  width: 245px;
+  height: 245px;
+  border-bottom-color: rgba(92, 172, 255, .6);
+  animation-duration: 18s;
+}
+
+@keyframes orbit {
+  to { transform: rotate(360deg); }
+}
+
+.orb-core {
+  width: 105px;
+  height: 105px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  border-radius: 34px;
+  background: linear-gradient(145deg, #d9ccff, #8057e8 60%, #397fcd);
   box-shadow:
-    0 0 35px rgba(145, 105, 255, .35),
-    0 0 90px rgba(105, 83, 220, .16);
+    0 0 35px rgba(143, 103, 255, .6),
+    0 0 100px rgba(111, 72, 220, .3),
+    inset 0 1px 15px rgba(255,255,255,.5);
+  animation: coreFloat 4s ease-in-out infinite;
 }
 
-.welcome h1 {
-  font-size: clamp(46px, 6vw, 76px);
-  letter-spacing: -4px;
-  line-height: 1.04;
-  margin: 23px 0;
+.orb-core span {
+  font-size: 48px;
+  color: white;
+  text-shadow: 0 0 20px white;
 }
 
-.welcome-description {
+.orb-light {
+  position: absolute;
+  width: 65px;
+  height: 65px;
+  top: -20px;
+  left: -12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.35);
+  filter: blur(25px);
+}
+
+@keyframes coreFloat {
+  50% { transform: translateY(-8px) scale(1.04); }
+}
+
+.orb-caption {
+  position: absolute;
+  bottom: -35px;
+  color: #b5a2f3;
+  font-size: 9px;
+  letter-spacing: 3px;
+}
+
+.nova-orb.listening .orb-ring {
+  border-color: rgba(120, 190, 255, .8);
+  animation-duration: 3s;
+}
+
+.nova-orb.listening .orb-core {
+  box-shadow: 0 0 70px rgba(90, 140, 255, .8);
+}
+
+/* TALK BUTTON */
+
+.talk-button {
+  min-width: 235px;
+  height: 59px;
+  margin-top: 55px;
+  padding: 0 23px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  border: 1px solid rgba(193, 171, 255, .55);
+  border-radius: 17px;
+  color: white;
+  background: linear-gradient(110deg, #8d68ed, #6244c4);
+  box-shadow: 0 8px 35px rgba(105, 70, 220, .3);
   font-size: 15px;
-  color: #aaa6bd;
-  line-height: 2;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .3s ease;
 }
 
-.suggestions {
-  max-width: 780px;
-  margin-top: 43px;
-  gap: 16px;
+.talk-button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 45px rgba(130, 95, 255, .5);
 }
 
-.suggestions button {
-  min-height: 105px;
-  padding: 21px;
-  border-radius: 19px;
+.mic-icon {
+  font-size: 19px;
+}
+
+.button-arrow {
+  font-size: 18px;
+}
+
+.hero-note {
+  margin-top: 17px;
+  color: #898397;
+  font-size: 11px;
+}
+
+/* FEATURES */
+
+.feature-row {
+  width: min(750px, 100%);
+  margin-top: 75px;
+  padding: 25px 15px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   text-align: left;
+}
+
+.feature-icon {
+  color: #b49aff;
+  font-size: 25px;
+}
+
+.feature h3 {
+  margin: 0 0 5px;
   font-size: 13px;
-  line-height: 1.8;
-  background: linear-gradient(145deg, rgba(34, 29, 55, .85), rgba(17, 18, 31, .8));
-  border: 1px solid rgba(164, 139, 255, .15);
-  box-shadow: 0 12px 35px rgba(0,0,0,.12);
 }
 
-.suggestions button:hover {
-  border-color: rgba(164, 139, 255, .55);
-  box-shadow: 0 12px 35px rgba(117, 83, 220, .13);
+.feature p {
+  margin: 0;
+  color: #898397;
+  font-size: 10px;
 }
 
-.input-box {
-  max-width: 850px;
-  padding: 19px 21px;
-  border-radius: 21px;
-  background: rgba(25, 22, 42, .96);
-  border: 1px solid rgba(164, 139, 255, .30);
-  box-shadow:
-    0 15px 50px rgba(0,0,0,.25),
-    0 0 30px rgba(130, 95, 230, .06);
+/* FOOTER */
+
+.footer {
+  min-height: 65px;
+  padding: 15px 35px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,.06);
+  color: #777184;
+  font-size: 9px;
+  letter-spacing: 2px;
 }
 
-.input-box:focus-within {
-  border-color: rgba(166, 135, 255, .75);
-  box-shadow: 0 0 30px rgba(130, 95, 230, .13);
-}
+/* MOBILE */
 
-.input-box textarea {
-  font-size: 14px;
-  min-height: 55px;
-}
-
-.input-bottom button {
-  padding: 12px 23px;
-  border-radius: 12px;
-}
-
-.main-footer {
-  background: rgba(255,255,255,.012);
-}
-
-@media (max-width: 760px) {
-  .welcome {
-    padding: 25px 5px;
+@media (max-width: 600px) {
+  .navbar {
+    height: 65px;
+    padding: 0 19px;
   }
 
-  .welcome h1 {
-    font-size: 45px;
-    letter-spacing: -2px;
+  .brand {
+    font-size: 16px;
+    gap: 7px;
   }
 
-  .welcome-icon {
-    width: 78px;
-    height: 78px;
-    font-size: 38px;
+  .brand-symbol {
+    font-size: 23px;
   }
 
-  .suggestions button {
-    min-height: 65px;
+  .brand-light {
+    font-size: 9px;
+    letter-spacing: 2px;
+  }
+
+  .nav-status {
+    font-size: 0;
+  }
+
+  .nav-status .status-dot {
+    width: 8px;
+    height: 8px;
+    margin: 0;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 70px 19px 50px;
+  }
+
+  .hero-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    gap: 8px;
+  }
+
+  .label-line {
+    width: 20px;
+  }
+
+  .hero h1 {
+    margin: 27px 0 14px;
+    font-size: clamp(43px, 12vw, 59px);
+    letter-spacing: -2.8px;
+    line-height: 1.08;
+  }
+
+  .hero-description {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .nova-orb {
+    width: 205px;
+    height: 205px;
+    margin-top: 40px;
+  }
+
+  .ring-one {
+    width: 125px;
+    height: 125px;
+  }
+
+  .ring-two {
+    width: 165px;
+    height: 165px;
+  }
+
+  .ring-three {
+    width: 205px;
+    height: 205px;
+  }
+
+  .orb-core {
+    width: 88px;
+    height: 88px;
+    border-radius: 29px;
+  }
+
+  .orb-core span {
+    font-size: 39px;
+  }
+
+  .talk-button {
+    width: min(100%, 270px);
+    height: 56px;
+    margin-top: 53px;
+  }
+
+  .feature-row {
+    margin-top: 60px;
+    padding: 23px 5px;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .feature {
+    justify-content: flex-start;
+    padding-left: 15%;
+  }
+
+  .feature h3 {
+    font-size: 13px;
+  }
+
+  .feature p {
+    font-size: 11px;
+  }
+
+  .footer {
+    min-height: 60px;
+    padding: 15px 18px;
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
   }
 }
