@@ -1,8 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./App.css";
 
 const API =
   import.meta.env.VITE_API_URL || "http://localhost:3001";
+
+const STORAGE_KEY = "nova_conversation";
 
 export default function App() {
   const [listening, setListening] = useState(false);
@@ -10,30 +12,83 @@ export default function App() {
   const [message, setMessage] = useState("");
   const [reply, setReply] = useState("");
   const [error, setError] = useState("");
+  const [language, setLanguage] = useState("en-IN");
+  const [history, setHistory] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch {
+      return [];
+    }
+  });
 
   const recognitionRef = useRef(null);
+  const bottomRef = useRef(null);
 
-  // NOVA VOICE RESPONSE
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  }, [history]);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [reply, message]);
+
+  // Detect response language for voice
+  const getVoiceLanguage = (text) => {
+    if (/[\u0B80-\u0BFF]/.test(text)) {
+      return "ta-IN";
+    }
+
+    return "en-IN";
+  };
+
+  // NOVA VOICE
   const speak = (text) => {
     if (!("speechSynthesis" in window)) return;
 
     window.speechSynthesis.cancel();
 
     const speech = new SpeechSynthesisUtterance(text);
-    speech.lang = "en-IN";
-    speech.rate = 1;
-    speech.pitch = 1;
+
+    speech.lang = getVoiceLanguage(text);
+    speech.rate = 0.95;
+    speech.pitch = 1.05;
+    speech.volume = 1;
+
+    const voices = window.speechSynthesis.getVoices();
+
+    const selectedVoice = voices.find(
+      (voice) =>
+        voice.lang.toLowerCase() ===
+        speech.lang.toLowerCase()
+    );
+
+    if (selectedVoice) {
+      speech.voice = selectedVoice;
+    }
 
     window.speechSynthesis.speak(speech);
   };
 
-  // SEND MESSAGE TO GEMINI
+  // SEND MESSAGE
   const sendMessage = async (text) => {
-    if (!text.trim() || loading) return;
+    const cleanText = text.trim();
+
+    if (!cleanText || loading) return;
 
     setLoading(true);
     setError("");
+    setMessage(cleanText);
     setReply("");
+
+    const updatedHistory = [
+      ...history,
+      {
+        role: "user",
+        content: cleanText,
+      },
+    ];
 
     try {
       const response = await fetch(`${API}/api/chat`, {
@@ -42,20 +97,35 @@ export default function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: text,
+          message: cleanText,
           mode: "nova",
+          history: updatedHistory.slice(-12, -1),
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "NOVA could not respond.");
+        throw new Error(
+          data.error || "NOVA could not respond."
+        );
       }
 
-      const answer = data.reply || data.message || "No response received.";
+      const answer =
+        data.reply || data.message || "No response received.";
 
       setReply(answer);
+
+      const finalHistory = [
+        ...updatedHistory,
+        {
+          role: "model",
+          content: answer,
+        },
+      ];
+
+      setHistory(finalHistory);
+
       speak(answer);
     } catch (err) {
       setError(err.message || "Something went wrong.");
@@ -71,7 +141,9 @@ export default function App() {
       window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      setError("Voice recognition is not supported. Please use Chrome.");
+      setError(
+        "Voice recognition is not supported. Please use Google Chrome."
+      );
       return;
     }
 
@@ -79,24 +151,31 @@ export default function App() {
 
     const recognition = new SpeechRecognition();
 
-    recognition.lang = "en-IN";
+    recognition.lang = language;
     recognition.continuous = false;
     recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
       setListening(true);
     };
 
     recognition.onresult = (event) => {
-      const text = event.results[0][0].transcript;
+      const text =
+        event.results[0][0].transcript;
 
       setMessage(text);
       sendMessage(text);
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (event) => {
       setListening(false);
-      setError("Voice recognition failed. Please try again.");
+
+      setError(
+        event.error === "not-allowed"
+          ? "Please allow microphone access."
+          : "Voice recognition failed. Please try again."
+      );
     };
 
     recognition.onend = () => {
@@ -104,13 +183,47 @@ export default function App() {
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
+
+    try {
+      recognition.start();
+    } catch {
+      setListening(false);
+      setError("Microphone could not start. Try again.");
+    }
+  };
+
+  // STOP NOVA VOICE
+  const stopVoice = () => {
+    window.speechSynthesis.cancel();
+
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
+
+    setListening(false);
+  };
+
+  // NEW CONVERSATION
+  const newConversation = () => {
+    stopVoice();
+    setHistory([]);
+    setMessage("");
+    setReply("");
+    setError("");
+    localStorage.removeItem(STORAGE_KEY);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    sendMessage(message);
+    setMessage("");
   };
 
   return (
     <div className="nova-app">
 
       <nav className="navbar">
+
         <div className="brand">
           <span className="brand-symbol">✦</span>
           <span>NOVA</span>
@@ -123,7 +236,14 @@ export default function App() {
           PERSONAL INTELLIGENCE
         </div>
 
-        <button className="menu-button">☰</button>
+        <button
+          className="menu-button"
+          onClick={newConversation}
+          title="New conversation"
+        >
+          ↻
+        </button>
+
       </nav>
 
       <main className="hero">
@@ -167,15 +287,32 @@ export default function App() {
 
         </div>
 
+        <div className="language-selector">
+          <label htmlFor="nova-language">
+            VOICE LANGUAGE
+          </label>
+
+          <select
+            id="nova-language"
+            value={language}
+            onChange={(event) =>
+              setLanguage(event.target.value)
+            }
+          >
+            <option value="en-IN">English</option>
+            <option value="ta-IN">தமிழ்</option>
+          </select>
+        </div>
+
         <button
           className="talk-button"
-          onClick={startVoice}
-          disabled={listening || loading}
+          onClick={listening ? stopVoice : startVoice}
+          disabled={loading}
         >
           <span className="mic-icon">🎙</span>
 
           {listening
-            ? "Listening..."
+            ? "Stop listening"
             : loading
             ? "Thinking..."
             : "Talk to NOVA"}
@@ -212,18 +349,41 @@ export default function App() {
           </div>
 
           <div className="feature">
-            <span className="feature-icon">⌁</span>
+            <span className="feature-icon">⌘</span>
             <div>
-              <h3>Responds</h3>
-              <p>With intelligent answers</p>
+              <h3>Remembers</h3>
+              <p>Your conversations</p>
             </div>
           </div>
 
         </div>
 
+        <div className="chat-box">
+
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={message}
+              onChange={(event) =>
+                setMessage(event.target.value)
+              }
+              placeholder="Talk to NOVA... Ask anything."
+              disabled={loading || listening}
+            />
+
+            <button
+              type="submit"
+              disabled={loading || !message.trim()}
+            >
+              Send ↗
+            </button>
+          </form>
+
+        </div>
+
         {message && (
           <div className="voice-response">
-            <p>You said:</p>
+            <p>YOU</p>
             <div>{message}</div>
           </div>
         )}
@@ -232,15 +392,24 @@ export default function App() {
           <div className="voice-response">
             <p>✦ NOVA</p>
             <div>{reply}</div>
+
+            <button
+              onClick={() => speak(reply)}
+              type="button"
+            >
+              🔊 Listen again
+            </button>
           </div>
         )}
 
         {error && (
           <div className="voice-response">
-            <p>Error</p>
+            <p>NOTICE</p>
             <div>{error}</div>
           </div>
         )}
+
+        <div ref={bottomRef}></div>
 
       </main>
 
